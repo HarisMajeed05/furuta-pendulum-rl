@@ -1,0 +1,11 @@
+name: furuta-rl
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - stable-baselines3[extra]==2.3.2
+      - gymnasium==0.29.1
+      - pygame==2.6.1
