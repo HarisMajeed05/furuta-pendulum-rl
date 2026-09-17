@@ -95,6 +95,21 @@ class FurutaPendulumEnv(gym.Env):
         theta_ddot, alpha_ddot = np.linalg.solve(M, rhs)
         return np.array([theta_dot, theta_ddot, alpha_dot, alpha_ddot])
 
+    def perturb(self, alpha_dot_kick: float = None, theta_dot_kick: float = None):
+        """Simulates an external physical disturbance, someone bumping the
+        arm or pendulum, by directly kicking the velocity terms. This is
+        NOT part of the action space, the agent doesn't cause this and
+        can't predict it, exactly like a real-world bump. Called from
+        outside the normal step() loop (see watch.py --disturb) rather
+        than from the RL training loop itself, since training with random
+        disturbances baked in would be a deliberate robustness-training
+        choice (domain randomization), a different, bigger decision than
+        just testing an already-trained agent's recovery behavior."""
+        if alpha_dot_kick is not None:
+            self.state[3] += alpha_dot_kick
+        if theta_dot_kick is not None:
+            self.state[1] += theta_dot_kick
+
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
         self.state = np.array([
